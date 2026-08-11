@@ -1,13 +1,17 @@
 const express = require("express");
+const dbConnect = require("./config/dbConnect");
 // const errorHandler = require("./middlewares/errorhandler");
 // const path = require("path");
-const dbConnect = require("./config/dbConnect");
 
 const app = express();
-const port = 3000;
-dbConnect();
 const router = express.Router();
+const port = 3000;
 
+dbConnect();
+
+app.set("view engine", "ejs");
+app.set("views", "./views");
+app.use(express.static("./public"));
 // const requestTime = (req,res,next)=>{
 //   let today = new Date();
 //   let now = today.toLocaleString();
