@@ -24,6 +24,9 @@ const getAllContacts = asyncHandler(async (req, res) => {
     // res.sendFile(filePath);
     // res.status(200).send("<h1 style='color:green'>Contacts Page</h1>")
 });
+const addContactForm = (req,res)=>{
+    res.render("add");
+};
 
 //@desc Create new contact
 //@route POST /contacts
@@ -38,7 +41,8 @@ const createContact = asyncHandler(async (req, res) => {
         email,
         phone,
     });
-    res.status(201).send("Create Contacts");
+    // res.status(201).send("Create Contacts");
+    res.redirect("/contacts")
 });
 
 //@desc Get contact
@@ -92,5 +96,5 @@ const deleteContact = asyncHandler(async (req, res) => {
     // res.status(200).send(`Delete Contact for ID ${req.params.id}`);
 });
 
-module.exports = { getAllContacts, createContact, getContact, updateContact,deleteContact };
+module.exports = { getAllContacts, createContact, getContact, updateContact,deleteContact, addContactForm, };
 
