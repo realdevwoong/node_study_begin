@@ -1,5 +1,6 @@
 const express = require("express");
 const dbConnect = require("./config/dbConnect");
+const methodOverride = require("method-override")
 // const errorHandler = require("./middlewares/errorhandler");
 // const path = require("path");
 
@@ -15,6 +16,7 @@ app.use(express.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(express.static("./public"));
+app.use(methodOverride("_method"));
 // const requestTime = (req,res,next)=>{
 //   let today = new Date();
 //   let now = today.toLocaleString();
@@ -32,6 +34,7 @@ app.use(express.static("./public"));
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use("/", require("./routes/loginRoutes"))
 app.use("/",require("./routes/contactRoutes"));
 
 

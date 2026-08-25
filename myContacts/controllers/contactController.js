@@ -48,10 +48,11 @@ const createContact = asyncHandler(async (req, res) => {
 //@desc Get contact
 //@route GET /contacts:id
 const getContact = asyncHandler(async (req, res) => {
-    // const contact = await Contact.findById(req.params.id);
-    const name = req.params.id;
-    const contact = await Contact.findOne({name:name});
-    res.status(200).send(contact);
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) {
+        return res.status(404).send("해당 연락처를 찾을 수 없습니다");
+    }
+    res.render("update", { contact: contact });
 });
 //@desc Update contact
 //@route PUT /contacts:id
@@ -76,25 +77,15 @@ const updateContact = asyncHandler(async (req, res) => {
         {name,email,phone},
         {new:true}
     );
-    res.send(200).send(updateContact);
+    res.redirect("/contacts");
 });
 
 //@desc Delete contact
-//@route DELETE /contacts:id
+// @desc Delete contact
+// @route DELETE /contacts/:id
 const deleteContact = asyncHandler(async (req, res) => {
-    // const contact = await Contact.findById(req.params.id);
-    // if(!contact){
-    //     res.status(404);
-    //     throw new Error("Contact not found");
-    // }
-    // await Contact.deleteOne();
-    const deletedContact = await Contact.findByIdAndDelete(req.params.id);
-    if (!deletedContact) {
-        return res.status(404).send("지울 값이 없습니다");
-    }
-    res.status(200).json(deletedContact);
-    // res.status(200).send(`Delete Contact for ID ${req.params.id}`);
+  await Contact.findByIdAndDelete(req.params.id);
+  res.redirect("/contacts");
 });
-
 module.exports = { getAllContacts, createContact, getContact, updateContact,deleteContact, addContactForm, };
 
