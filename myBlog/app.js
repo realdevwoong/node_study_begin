@@ -1,8 +1,15 @@
 require("dotenv").config();
 const express = require("express");
+
+const expressLayouts = require("express-ejs-layouts");
+const connectDB = require("./config/db");
 const app = express();
 const port = process.env.PORT || 3000;
-const expressLayouts = require("express-ejs-layouts");
+
+connectDB().catch((error) => {
+  console.error(`MongoDB connection failed: ${error.message}`);
+  console.error("Check your MONGODB_URI username, password, database user permissions, and Atlas network access.");
+});
 
 app.use(expressLayouts);
 app.set("view engine", "ejs");

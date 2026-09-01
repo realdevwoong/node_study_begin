@@ -9,8 +9,10 @@
 | 라우팅 설정 | ✅ 완료 | 100% |
 | 뷰 엔진 설정 | ✅ 완료 | 100% |
 | 템플릿 파일 작성 | ✅ 완료 | 100% |
+| UI 구현 | ✅ 완료 | 100% |
+| **MongoDB 연결** | **⚠️ 진행중** | **50%** |
 
-**전체 진행도**: `████████████` 100% (기본 기능 완성)
+**전체 진행도**: `██████████░` 95% (인증 해결 대기중)
 
 ---
 
@@ -105,13 +107,47 @@
 **날짜**: 2026-09-01  
 **목적**: EJS 템플릿 파일 작성으로 동적 페이지 렌더링 구현  
 **상태**: ✅ 완료  
-**설명**: 레이아웃 및 페이지 템플릿 작성  
+**설명**: 레이아웃 및 페이지 템플릿 작성 (기본 구조)
 **변경사항**:
 - ✅ views/ 디렉토리 생성
 - ✅ views/layouts/ 디렉토리 생성
-- ✅ views/layouts/main.ejs 작성 (기본 레이아웃 - DOCTYPE, html, body)
-- ✅ views/index.ejs 작성 (홈 페이지 - `<h1>Home</h1>`)
-- ✅ views/about.ejs 작성 (어바웃 페이지 - `<h1>About Us</h1>`)
+- ✅ views/layouts/main.ejs 작성 (기본 레이아웃)
+- ✅ views/index.ejs 작성 (홈 페이지)
+- ✅ views/about.ejs 작성 (어바웃 페이지)
+
+### 9️⃣ 템플릿 파일 상세 구현
+**날짜**: 2026-09-01  
+**목적**: 블로그 레이아웃 및 페이지 디자인 완성  
+**상태**: ✅ 완료  
+**설명**: 한글 기반 블로그 템플릿 구현, 헤더 및 네비게이션 추가
+**변경사항**:
+- ✅ views/layouts/main.ejs 업그레이드:
+  - DOCTYPE html 구조 (언어: 한국어)
+  - 메타 태그 추가 (charset, viewport, description)
+  - CSS 링크 추가 (`/css/style.css`)
+  - 헤더 구현 (로고 "오후의 블로그", 네비게이션)
+  - container div 래퍼 추가
+  - 상단 메뉴: Home, About 링크
+- ✅ views/index.ejs 확장:
+  - 상단 소개글 섹션 (히어로 텍스트)
+  - "하루하루 스터디" 제목
+  - "매일 1시간씩 공부한 내용을 기록하고 있습니다." 설명
+  - 히어로 이미지 추가 (`/img/top-hero.jpg`)
+  - 최근 게시물 섹션 (articles)
+  - 게시물 리스트 예제 포함 (제목, 날짜)
+- ⏳ views/about.ejs: 기본 구조만 유지 (향후 확장 예정)
+
+### 1️⃣0️⃣ npm i mongoose express-async-handler & MongoDB 연결 설정
+**날짜**: 2026-09-01  
+**목적**: MongoDB 데이터베이스 연결을 위한 의존성 설치 및 설정  
+**상태**: ⚠️ 진행중  
+**설명**: Mongoose ODM과 비동기 핸들러 설치, DB 연결 구성  
+**변경사항**:
+- ✅ mongoose 설치 - MongoDB ODM
+- ✅ express-async-handler 설치 - 비동기 에러 핸들링
+- ✅ config/db.js 오타 수정: `conn.connection.host` → `connect.connection.host`
+- ✅ .env 파일에 MONGODB_URI 설정
+- ⚠️ MongoDB 인증 실패 (bad auth) - 비밀번호 또는 IP 화이트리스트 확인 필요
 
 ---
 
@@ -125,7 +161,9 @@
 | 2026-09-01 | 🐛 버그 수정 | routes/main.js 에러 수정 |
 | 2026-09-01 | ✅ EJS 설정 완료 | app.js EJS 뷰 엔진 설정 및 라우트 확장 완료 |
 | 2026-09-01 | 📄 템플릿 작성 완료 | views 디렉토리 및 EJS 템플릿 파일 작성 완료 |
-| - | ⏳ 다음 단계 | 서버 테스트 및 스타일링 |
+| 2026-09-01 | 🎨 UI 구현 | 블로그 레이아웃 및 상세 템플릿 작성 |
+| 2026-09-01 | 🗄️ MongoDB 설정 중 | Mongoose 설치, DB 연결 구성 (인증 에러 발생) |
+| - | ⏳ 다음 단계 | MongoDB 인증 해결 및 CSS 스타일링 |
 
 **Journey 모드**: 🔴 활성화 - 모든 작업 기록 중
 
@@ -208,9 +246,12 @@ myBlog/
 - [x] **6️⃣ routes/main.js 확장 & 버그 수정**: 라우트 확장 및 에러 수정
 - [x] **7️⃣ app.js EJS 설정 완료**: EJS 뷰 엔진 등록 및 설정
 - [x] **8️⃣ views 디렉토리 생성**: 템플릿 파일 작성 (layout.ejs, index.ejs, about.ejs)
-- [ ] **9️⃣ public 디렉토리 구성**: CSS, JS, 이미지 파일 구성
-- [ ] **🔟 npm start 테스트**: 서버 실행 및 페이지 확인
-- [ ] **1️⃣1️⃣ 스타일링**: CSS 추가 및 페이지 꾸미기
+- [x] **9️⃣ 템플릿 파일 상세 구현**: 블로그 UI 레이아웃 및 컨텐츠 작성
+- [x] **🔟 npm i mongoose express-async-handler**: MongoDB 의존성 설치
+- [ ] **1️⃣1️⃣ MongoDB 인증 해결**: 비밀번호 재확인 및 IP 화이트리스트 설정
+- [ ] **1️⃣2️⃣ public 디렉토리 구성**: CSS, JS, 이미지 파일 추가
+- [ ] **1️⃣3️⃣ CSS 스타일링**: style.css 작성 및 페이지 디자인
+- [ ] **1️⃣4️⃣ npm start 테스트**: 서버 실행 및 모든 페이지 확인
 
 ---
 
