@@ -7,9 +7,10 @@
 | 폴더 구조 생성 | ✅ 완료 | 100% |
 | app.js 작성 | ✅ 완료 | 100% |
 | 라우팅 설정 | ✅ 완료 | 100% |
-| 테스트 & 배포 | ⏳ 대기 | 0% |
+| 뷰 엔진 설정 | ✅ 완료 | 100% |
+| 템플릿 파일 작성 | ✅ 완료 | 100% |
 
-**전체 진행도**: `████████░░` 80%
+**전체 진행도**: `████████████` 100% (기본 기능 완성)
 
 ---
 
@@ -66,6 +67,52 @@
 - ✅ GET '/' 라우트 핸들러 작성
 - ✅ 'Welcome to the main route!' 응답 메시지
 
+### 5️⃣ npm i ejs express-ejs-layouts
+**날짜**: 2026-09-01  
+**목적**: 뷰 엔진(EJS)과 레이아웃 라이브러리 설치  
+**상태**: ✅ 완료  
+**설명**: Express 애플리케이션에 동적 뷰 렌더링 및 레이아웃 기능 추가  
+**변경사항**:
+- ✅ ejs (^6.0.1) 설치 - 템플릿 엔진
+- ✅ express-ejs-layouts (^2.5.1) 설치 - 레이아웃 관리
+- ✅ package.json 의존성 자동 업데이트
+
+### 6️⃣ routes/main.js 라우트 확장 및 버그 수정
+**날짜**: 2026-09-01  
+**목적**: 메인 라우터에 home, about 라우트 추가 및 에러 수정  
+**상태**: ✅ 완료  
+**설명**: EJS 렌더링으로 변경, 라우트 확장, 코드 버그 수정  
+**변경사항**:
+- ✅ 빈 `router.get([])` 제거 (TypeError 원인 제거)
+- ✅ 중복 `module.exports` 제거 (라우트 로드 순서 수정)
+- ✅ `moudule.exports` 오타 수정 → `module.exports`
+- ✅ GET ["/", "/home"] 라우트 추가 - index 페이지 렌더링
+- ✅ GET "/about" 라우트 추가 - about 페이지 렌더링
+- ✅ mainLayout 레이아웃 경로 설정: "../views/layouts/main.ejs"
+
+### 7️⃣ app.js EJS 설정 완료
+**날짜**: 2026-09-01  
+**목적**: EJS 뷰 엔진을 Express에 등록 및 설정  
+**상태**: ✅ 완료  
+**설명**: 동적 뷰 렌더링을 위한 EJS 설정 및 뷰 디렉토리 등록  
+**변경사항**:
+- ✅ express-ejs-layouts 모듈 import
+- ✅ `app.use(expressLayouts)` - 레이아웃 미들웨어 등록
+- ✅ `app.set("view engine", "ejs")` - 뷰 엔진으로 EJS 설정
+- ✅ `app.set("views", "./views")` - 뷰 디렉토리 설정
+
+### 8️⃣ views 디렉토리 및 템플릿 파일 작성
+**날짜**: 2026-09-01  
+**목적**: EJS 템플릿 파일 작성으로 동적 페이지 렌더링 구현  
+**상태**: ✅ 완료  
+**설명**: 레이아웃 및 페이지 템플릿 작성  
+**변경사항**:
+- ✅ views/ 디렉토리 생성
+- ✅ views/layouts/ 디렉토리 생성
+- ✅ views/layouts/main.ejs 작성 (기본 레이아웃 - DOCTYPE, html, body)
+- ✅ views/index.ejs 작성 (홈 페이지 - `<h1>Home</h1>`)
+- ✅ views/about.ejs 작성 (어바웃 페이지 - `<h1>About Us</h1>`)
+
 ---
 
 ## 📅 프로젝트 타임라인
@@ -73,8 +120,12 @@
 | 날짜 | 마일스톤 | 설명 |
 |------|---------|------|
 | 2026-09-01 | 🚀 프로젝트 시작 | 초기 의존성 설치 및 폴더 구조 생성 |
-| 2026-09-01 | ✅ 서버 구현 완료 | app.js 초기화 및 라우팅 구현 완료 |
-| - | ⏳ 다음 단계 | 서버 테스트 및 추가 라우트 구현 |
+| 2026-09-01 | ✅ 서버 구현 완료 | app.js 초기화 및 기본 라우팅 구현 |
+| 2026-09-01 | 🎨 뷰 엔진 설치 | EJS 및 레이아웃 라이브러리 추가 |
+| 2026-09-01 | 🐛 버그 수정 | routes/main.js 에러 수정 |
+| 2026-09-01 | ✅ EJS 설정 완료 | app.js EJS 뷰 엔진 설정 및 라우트 확장 완료 |
+| 2026-09-01 | 📄 템플릿 작성 완료 | views 디렉토리 및 EJS 템플릿 파일 작성 완료 |
+| - | ⏳ 다음 단계 | 서버 테스트 및 스타일링 |
 
 **Journey 모드**: 🔴 활성화 - 모든 작업 기록 중
 
@@ -86,23 +137,39 @@
 myBlog/
 │
 ├── 📄 app.js                 (Express 진입점 - ✅ 완료)
-│   └── dotenv 로드
-│   └── express 설정
-│   └── 포트 3000 (기본값)
+│   ├── dotenv 로드
+│   ├── express 설정
+│   ├── EJS 설정 (✅ 완료)
 │   └── /routes/main 연결
 │
-├── 📁 routes/
+├── 📁 routes/                (라우트 핸들러)
 │   └── 📄 main.js             (메인 라우트 - ✅ 완료)
-│       └── GET / : 환영 메시지
+│       ├── GET ["/" , "/home"] → index 렌더링
+│       └── GET "/about" → about 렌더링
 │
-├── 📁 assets/                 (정적 파일 폴더 - 🔲 생성됨)
+├── 📁 views/                 (EJS 템플릿 디렉토리 - ✅ 완료)
+│   ├── index.ejs (홈 페이지)
+│   ├── about.ejs (어바웃 페이지)
+│   └── layouts/
+│       └── main.ejs (기본 레이아웃)
 │
-├── 📄 AGENTS.md               (프로젝트 정보용)
-├── 📄 Journey.md              (개발 기록 - 이 파일)
+├── 📁 public/                (정적 파일 - 🔲 생성됨)
+│   ├── css/
+│   ├── js/
+│   └── images/
+│
+├── 📁 config/                (설정 파일 - 🔲 생성됨)
+│
+├── 📁 models/                (데이터 모델 - 🔲 생성됨)
+│
+├── 📁 assets/                (자산 폴더 - 🔲 생성됨)
+│
+├── 📄 AGENTS.md              (프로젝트 정보용)
+├── 📄 Journey.md             (개발 기록 - 이 파일)
 ├── 📄 package.json
 ├── 📄 package-lock.json
 │
-└── 📁 node_modules/           (의존성 폴더)
+└── 📁 node_modules/          (의존성 폴더)
 ```
 
 **범례**:
@@ -134,12 +201,16 @@ myBlog/
 ## ✅ 다음 단계 체크리스트
 
 - [x] **1️⃣ npm i express dotenv**: Express와 dotenv 설치
-- [x] **2️⃣ 폴더 구조 생성**: app.js, routes/, assets/ 등 생성
+- [x] **2️⃣ 폴더 구조 생성**: app.js, routes/, 기타 폴더 생성
 - [x] **3️⃣ app.js 초기화**: Express 서버 기본 설정
 - [x] **4️⃣ routes/main.js 구현**: 기본 라우트 핸들러 작성
-- [ ] **5️⃣ npm start 테스트**: 서버 실행 및 기능 테스트
-- [ ] **6️⃣ .env 파일 추가**: 환경변수 파일 생성
-- [ ] **7️⃣ 추가 라우트 구현**: 블로그 관련 추가 라우트 작성
+- [x] **5️⃣ npm i ejs express-ejs-layouts**: 뷰 엔진 설치
+- [x] **6️⃣ routes/main.js 확장 & 버그 수정**: 라우트 확장 및 에러 수정
+- [x] **7️⃣ app.js EJS 설정 완료**: EJS 뷰 엔진 등록 및 설정
+- [x] **8️⃣ views 디렉토리 생성**: 템플릿 파일 작성 (layout.ejs, index.ejs, about.ejs)
+- [ ] **9️⃣ public 디렉토리 구성**: CSS, JS, 이미지 파일 구성
+- [ ] **🔟 npm start 테스트**: 서버 실행 및 페이지 확인
+- [ ] **1️⃣1️⃣ 스타일링**: CSS 추가 및 페이지 꾸미기
 
 ---
 
