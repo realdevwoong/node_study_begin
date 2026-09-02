@@ -1,258 +1,290 @@
 # MyBlog 개발 여정 (Journey)
 
-## � 빠른 요약 (Quick Summary)
-| 항목 | 상태 | 진행도 |
-|------|------|--------|
-| 의존성 설치 | ✅ 완료 | 100% |
-| 폴더 구조 생성 | ✅ 완료 | 100% |
-| app.js 작성 | ✅ 완료 | 100% |
-| 라우팅 설정 | ✅ 완료 | 100% |
-| 뷰 엔진 설정 | ✅ 완료 | 100% |
-| 템플릿 파일 작성 | ✅ 완료 | 100% |
-| UI 구현 | ✅ 완료 | 100% |
-| **MongoDB 연결** | **⚠️ 진행중** | **50%** |
+## 빠른 요약
 
-**전체 진행도**: `██████████░` 95% (인증 해결 대기중)
+| 영역 | 상태 | 메모 |
+|------|------|------|
+| Express 서버 | 진행중 | `app.js`에서 미들웨어, 뷰 엔진, 라우터 연결 |
+| EJS 레이아웃 | 진행중 | 일반 사용자 레이아웃과 관리자 레이아웃 분리 |
+| MongoDB 연결 | 진행중 | `mongoose`로 연결, `.env`의 `MONGODB_URI` 사용 |
+| 게시글 조회 | 진행중 | 메인 목록과 상세 페이지 조회 가능 |
+| 관리자 인증 | 진행중 | `bcrypt`, `jwt`, `cookie-parser` 기반 로그인 흐름 작성 중 |
+| 관리자 게시글 목록 | 수정 필요 | `views/admin/allPosts.ejs` 파일 생성 필요 |
 
----
-
-## 📑 목차
-1. [작업 기록](#-작업-기록)
-2. [프로젝트 타임라인](#-프로젝트-타임라인)
-3. [프로젝트 구조](#-현재-프로젝트-구조)
-4. [기록 규칙](#-기록-규칙)
-5. [체크리스트](#-다음-단계-체크리스트)
+**전체 진행도**: `████████░░` 80%
 
 ---
 
-## 📋 작업 기록
+## 아키텍처 관점
 
-### 1️⃣ npm i express dotenv
-**날짜**: 2026-09-01  
-**목적**: Express.js (웹 프레임워크)와 dotenv (환경변수 관리) 설치  
-**상태**: ✅ 완료  
-**설명**: 블로그 프로젝트 초기 의존성 설치  
-**변경사항**: 
-- ✅ package-lock.json 생성
-- ✅ node_modules/ 디렉토리 생성
+### 1. 앱 진입점
 
-### 2️⃣ app.js & routes 디렉토리 구조 생성
-**날짜**: 2026-09-01  
-**목적**: Express 진입점과 라우팅 구조 설정  
-**상태**: ✅ 완료  
-**설명**: 기본 폴더 구조 및 파일 생성  
-**변경사항**:
-- ✅ app.js 파일 생성
-- ✅ routes/ 디렉토리 생성
-- ✅ routes/main.js 생성
-- ✅ assets/ 디렉토리 생성
+`app.js`가 Express 애플리케이션의 시작점이다.
 
-### 3️⃣ app.js 초기화 및 Express 서버 설정
-**날짜**: 2026-09-01  
-**목적**: Express 서버의 기본 설정 및 초기화  
-**상태**: ✅ 완료  
-**설명**: dotenv 로드, Express 앱 생성, 포트 설정, 라우팅 연결  
-**변경사항**:
-- ✅ dotenv 환경변수 로드 (`require("dotenv").config()`)
-- ✅ express 모듈 import
-- ✅ 포트 설정 (기본값: 3000, .env에서 커스터마이징 가능)
-- ✅ /routes/main 라우트 연결
-- ✅ 서버 listen 설정 및 콘솔 메시지
+- `.env`를 로드한다.
+- `connectDB()`로 MongoDB 연결을 시도한다.
+- `express-ejs-layouts`를 등록한다.
+- EJS 뷰 엔진과 `views` 디렉토리를 설정한다.
+- `public` 디렉토리를 정적 파일 경로로 연결한다.
+- JSON, form body, cookie 파싱 미들웨어를 등록한다.
+- `routes/main.js`, `routes/admin.js`를 `/` 기준으로 연결한다.
 
-### 4️⃣ routes/main.js 라우트 핸들러 구현
-**날짜**: 2026-09-01  
-**목적**: 기본 라우트 핸들러 작성  
-**상태**: ✅ 완료  
-**설명**: GET / 라우트로 환영 메시지 반환  
-**변경사항**:
-- ✅ 일반인용 라우터 생성 (주석: //일반인이 사용할 라우터)
-- ✅ GET '/' 라우트 핸들러 작성
-- ✅ 'Welcome to the main route!' 응답 메시지
+### 2. 계층 구조
 
-### 5️⃣ npm i ejs express-ejs-layouts
-**날짜**: 2026-09-01  
-**목적**: 뷰 엔진(EJS)과 레이아웃 라이브러리 설치  
-**상태**: ✅ 완료  
-**설명**: Express 애플리케이션에 동적 뷰 렌더링 및 레이아웃 기능 추가  
-**변경사항**:
-- ✅ ejs (^6.0.1) 설치 - 템플릿 엔진
-- ✅ express-ejs-layouts (^2.5.1) 설치 - 레이아웃 관리
-- ✅ package.json 의존성 자동 업데이트
+현재 프로젝트는 Express MVC에 가까운 구조로 나뉜다.
 
-### 6️⃣ routes/main.js 라우트 확장 및 버그 수정
-**날짜**: 2026-09-01  
-**목적**: 메인 라우터에 home, about 라우트 추가 및 에러 수정  
-**상태**: ✅ 완료  
-**설명**: EJS 렌더링으로 변경, 라우트 확장, 코드 버그 수정  
-**변경사항**:
-- ✅ 빈 `router.get([])` 제거 (TypeError 원인 제거)
-- ✅ 중복 `module.exports` 제거 (라우트 로드 순서 수정)
-- ✅ `moudule.exports` 오타 수정 → `module.exports`
-- ✅ GET ["/", "/home"] 라우트 추가 - index 페이지 렌더링
-- ✅ GET "/about" 라우트 추가 - about 페이지 렌더링
-- ✅ mainLayout 레이아웃 경로 설정: "../views/layouts/main.ejs"
-
-### 7️⃣ app.js EJS 설정 완료
-**날짜**: 2026-09-01  
-**목적**: EJS 뷰 엔진을 Express에 등록 및 설정  
-**상태**: ✅ 완료  
-**설명**: 동적 뷰 렌더링을 위한 EJS 설정 및 뷰 디렉토리 등록  
-**변경사항**:
-- ✅ express-ejs-layouts 모듈 import
-- ✅ `app.use(expressLayouts)` - 레이아웃 미들웨어 등록
-- ✅ `app.set("view engine", "ejs")` - 뷰 엔진으로 EJS 설정
-- ✅ `app.set("views", "./views")` - 뷰 디렉토리 설정
-
-### 8️⃣ views 디렉토리 및 템플릿 파일 작성
-**날짜**: 2026-09-01  
-**목적**: EJS 템플릿 파일 작성으로 동적 페이지 렌더링 구현  
-**상태**: ✅ 완료  
-**설명**: 레이아웃 및 페이지 템플릿 작성 (기본 구조)
-**변경사항**:
-- ✅ views/ 디렉토리 생성
-- ✅ views/layouts/ 디렉토리 생성
-- ✅ views/layouts/main.ejs 작성 (기본 레이아웃)
-- ✅ views/index.ejs 작성 (홈 페이지)
-- ✅ views/about.ejs 작성 (어바웃 페이지)
-
-### 9️⃣ 템플릿 파일 상세 구현
-**날짜**: 2026-09-01  
-**목적**: 블로그 레이아웃 및 페이지 디자인 완성  
-**상태**: ✅ 완료  
-**설명**: 한글 기반 블로그 템플릿 구현, 헤더 및 네비게이션 추가
-**변경사항**:
-- ✅ views/layouts/main.ejs 업그레이드:
-  - DOCTYPE html 구조 (언어: 한국어)
-  - 메타 태그 추가 (charset, viewport, description)
-  - CSS 링크 추가 (`/css/style.css`)
-  - 헤더 구현 (로고 "오후의 블로그", 네비게이션)
-  - container div 래퍼 추가
-  - 상단 메뉴: Home, About 링크
-- ✅ views/index.ejs 확장:
-  - 상단 소개글 섹션 (히어로 텍스트)
-  - "하루하루 스터디" 제목
-  - "매일 1시간씩 공부한 내용을 기록하고 있습니다." 설명
-  - 히어로 이미지 추가 (`/img/top-hero.jpg`)
-  - 최근 게시물 섹션 (articles)
-  - 게시물 리스트 예제 포함 (제목, 날짜)
-- ⏳ views/about.ejs: 기본 구조만 유지 (향후 확장 예정)
-
-### 1️⃣0️⃣ npm i mongoose express-async-handler & MongoDB 연결 설정
-**날짜**: 2026-09-01  
-**목적**: MongoDB 데이터베이스 연결을 위한 의존성 설치 및 설정  
-**상태**: ⚠️ 진행중  
-**설명**: Mongoose ODM과 비동기 핸들러 설치, DB 연결 구성  
-**변경사항**:
-- ✅ mongoose 설치 - MongoDB ODM
-- ✅ express-async-handler 설치 - 비동기 에러 핸들링
-- ✅ config/db.js 오타 수정: `conn.connection.host` → `connect.connection.host`
-- ✅ .env 파일에 MONGODB_URI 설정
-- ⚠️ MongoDB 인증 실패 (bad auth) - 비밀번호 또는 IP 화이트리스트 확인 필요
-
----
-
-## 📅 프로젝트 타임라인
-
-| 날짜 | 마일스톤 | 설명 |
-|------|---------|------|
-| 2026-09-01 | 🚀 프로젝트 시작 | 초기 의존성 설치 및 폴더 구조 생성 |
-| 2026-09-01 | ✅ 서버 구현 완료 | app.js 초기화 및 기본 라우팅 구현 |
-| 2026-09-01 | 🎨 뷰 엔진 설치 | EJS 및 레이아웃 라이브러리 추가 |
-| 2026-09-01 | 🐛 버그 수정 | routes/main.js 에러 수정 |
-| 2026-09-01 | ✅ EJS 설정 완료 | app.js EJS 뷰 엔진 설정 및 라우트 확장 완료 |
-| 2026-09-01 | 📄 템플릿 작성 완료 | views 디렉토리 및 EJS 템플릿 파일 작성 완료 |
-| 2026-09-01 | 🎨 UI 구현 | 블로그 레이아웃 및 상세 템플릿 작성 |
-| 2026-09-01 | 🗄️ MongoDB 설정 중 | Mongoose 설치, DB 연결 구성 (인증 에러 발생) |
-| - | ⏳ 다음 단계 | MongoDB 인증 해결 및 CSS 스타일링 |
-
-**Journey 모드**: 🔴 활성화 - 모든 작업 기록 중
-
----
-
-## 📁 현재 프로젝트 구조
-
+```text
+브라우저 요청
+  -> app.js
+  -> routes/*.js
+  -> models/*.js
+  -> MongoDB
+  -> views/*.ejs
+  -> 브라우저 응답
 ```
+
+- `routes/`: URL 요청을 받고 어떤 데이터를 조회할지 결정한다.
+- `models/`: MongoDB 컬렉션 구조를 Mongoose schema로 정의한다.
+- `views/`: EJS 템플릿으로 HTML을 만든다.
+- `views/layouts/`: 공통 HTML 틀을 담당한다.
+- `public/`: CSS, 이미지 같은 정적 파일을 제공한다.
+- `config/`: DB 연결 같은 설정 코드를 둔다.
+
+### 3. 레이아웃 흐름
+
+`express-ejs-layouts`는 실제 페이지 view를 먼저 렌더링한 뒤, 그 결과를 layout의 `<%- body %>` 위치에 넣는다.
+
+```text
+res.render("admin/index", { layout: adminLayout })
+  -> views/admin/index.ejs 렌더링
+  -> views/layouts/admin.ejs의 <%- body %>에 삽입
+```
+
+일반 페이지는 `views/layouts/main.ejs`를 사용하고, 관리자 페이지는 `views/layouts/admin.ejs`를 사용한다.
+
+### 4. 인증 흐름
+
+관리자 로그인은 다음 흐름을 목표로 한다.
+
+```text
+POST /admin
+  -> username으로 User 찾기
+  -> bcrypt.compare()로 비밀번호 확인
+  -> jwt.sign()으로 토큰 생성
+  -> res.cookie("token", token)으로 브라우저에 저장
+  -> /allPosts로 이동
+```
+
+보호 라우트는 `checkLogin` 미들웨어를 거친다.
+
+```text
+GET /allPosts
+  -> checkLogin
+  -> req.cookies.token 확인
+  -> jwt.verify() 성공 시 next()
+  -> 게시글 목록 조회
+  -> admin/allPosts 렌더링
+```
+
+주의할 점:
+
+- `jwt.sign({ id: user.id }, jwtSecret)`로 만들었다면 검증 후에는 `decoded.id`를 사용해야 한다.
+- `jwt.sign({ userId: user.id }, jwtSecret)`로 만들었다면 검증 후에는 `decoded.userId`를 사용해야 한다.
+- 로그인 실패 응답 뒤에는 `return`을 붙여 아래 코드가 계속 실행되지 않게 해야 한다.
+
+---
+
+## 라우트 관점
+
+### 일반 사용자 라우트
+
+| Method | Path | 파일 | 역할 | View |
+|--------|------|------|------|------|
+| GET | `/` | `routes/main.js` | 홈 게시글 목록 조회 | `views/index.ejs` |
+| GET | `/home` | `routes/main.js` | 홈 게시글 목록 조회 | `views/index.ejs` |
+| GET | `/post/:id` | `routes/main.js` | 게시글 상세 조회 | `views/post.ejs` |
+| GET | `/about` | `routes/main.js` | 소개 페이지 | `views/about.ejs` |
+| GET | `/contact` | `routes/main.js` | 연락 페이지 | `views/contact.ejs` 필요 |
+
+### 관리자 라우트
+
+| Method | Path | 파일 | 역할 | View |
+|--------|------|------|------|------|
+| GET | `/admin` | `routes/admin.js` | 관리자 로그인 화면 | `views/admin/index.ejs` |
+| POST | `/admin` | `routes/admin.js` | 관리자 로그인 처리 | 성공 시 `/allPosts` |
+| GET | `/register` | `routes/admin.js` | 관리자 등록 화면 | `views/admin/index.ejs` |
+| POST | `/register` | `routes/admin.js` | 관리자 계정 생성 | DB 저장 필요 |
+| GET | `/allPosts` | `routes/admin.js` | 관리자 게시글 목록 | `views/admin/allPosts.ejs` 필요 |
+
+### 현재 확인된 라우트 이슈
+
+- `GET /contact`는 `views/contact.ejs`가 없으면 view lookup 에러가 난다.
+- `GET /allPosts`는 `views/admin/allPosts.ejs`가 없으면 view lookup 에러가 난다.
+- `POST /register`는 `await user.save()` 또는 `User.create()`가 있어야 실제 DB에 저장된다.
+- 로그인 실패 처리에는 `return res.status(...).json(...)` 형태가 안전하다.
+- `bcrpyt` 변수명은 동작은 가능하지만 오타라서 `bcrypt`로 바꾸는 편이 좋다.
+
+---
+
+## 설치된 패키지
+
+현재 `package.json` 기준 dependency:
+
+| 패키지 | 목적 |
+|--------|------|
+| `express` | Node.js 웹 서버 프레임워크 |
+| `dotenv` | `.env` 환경변수 로드 |
+| `ejs` | HTML 템플릿 엔진 |
+| `express-ejs-layouts` | EJS 공통 레이아웃 관리 |
+| `mongoose` | MongoDB ODM |
+| `express-async-handler` | async 라우트 에러 처리 |
+| `bcrypt` | 비밀번호 해시 및 비교 |
+| `cookie-parser` | `req.cookies` 사용 |
+| `jsonwebtoken` | JWT 생성 및 검증 |
+| `method-override` | HTML form에서 PUT/DELETE 같은 메서드 흉내내기 |
+
+---
+
+## 설치해야 할 것
+
+### 바로 필요할 수 있는 패키지
+
+```bash
+npm i nodemon --save-dev
+```
+
+개발 중 서버 자동 재시작용이다. 설치 후 `package.json` scripts에 아래처럼 추가하면 편하다.
+
+```json
+{
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  }
+}
+```
+
+### 테스트를 시작할 때
+
+Jest를 선택하는 경우:
+
+```bash
+npm i jest supertest --save-dev
+```
+
+Mocha를 선택하는 경우:
+
+```bash
+npm i mocha chai supertest --save-dev
+```
+
+처음에는 Jest 하나만 먼저 공부하고 적용하는 것을 추천한다. Mocha는 비교 학습용으로 나중에 보면 좋다.
+
+---
+
+## 공부해야 할 것
+
+### 지금 프로젝트에 바로 필요한 주제
+
+- Express middleware: `req`, `res`, `next` 흐름
+- Express Router: `app.use()`, `router.get()`, `router.post()`
+- EJS: `<%= %>`, `<%- %>`, layout의 `body`
+- MongoDB Atlas: DB user, Network Access, connection string
+- Mongoose: schema, model, `find`, `findOne`, `create`, `save`
+- bcrypt: password hash, salt round, `compare`
+- JWT: token payload, `sign`, `verify`, cookie 저장
+- cookie-parser: `req.cookies` 구조
+- HTTP status code: 200, 302, 401, 404, 500
+- 환경변수: `.env`, `process.env`, secret 관리
+
+### 테스트
+
+- Jest: Node.js 프로젝트에서 가장 먼저 적용하기 좋은 테스트 프레임워크
+- Supertest: Express route를 실제 HTTP 요청처럼 테스트
+- Mocha: 테스트 러너 구조를 이해하기 좋음
+- Chai: Mocha와 함께 쓰는 assertion 라이브러리
+
+### 배포
+
+- Cloudtype: Node.js 앱 배포, 환경변수 등록, 배포 로그 확인
+- MongoDB Atlas 운영 설정: IP allowlist, DB user 권한, URI 관리
+
+### 다음 백엔드 프레임워크 비교
+
+- Nest.js: Express/Fastify 위에서 동작하는 구조화된 Node.js 프레임워크
+- Fastify: 성능과 schema 기반 검증에 강한 Node.js 웹 프레임워크
+- Koa.js: Express보다 더 얇고 middleware 흐름이 깔끔한 프레임워크
+
+추천 학습 순서:
+
+```text
+Express 기본기
+-> MongoDB/Mongoose
+-> 인증과 JWT
+-> Jest/Supertest
+-> Cloudtype 배포
+-> Nest.js
+-> Fastify
+-> Koa.js
+-> Mocha 비교 학습
+```
+
+---
+
+## 현재 프로젝트 구조
+
+```text
 myBlog/
-│
-├── 📄 app.js                 (Express 진입점 - ✅ 완료)
-│   ├── dotenv 로드
-│   ├── express 설정
-│   ├── EJS 설정 (✅ 완료)
-│   └── /routes/main 연결
-│
-├── 📁 routes/                (라우트 핸들러)
-│   └── 📄 main.js             (메인 라우트 - ✅ 완료)
-│       ├── GET ["/" , "/home"] → index 렌더링
-│       └── GET "/about" → about 렌더링
-│
-├── 📁 views/                 (EJS 템플릿 디렉토리 - ✅ 완료)
-│   ├── index.ejs (홈 페이지)
-│   ├── about.ejs (어바웃 페이지)
+├── app.js
+├── config/
+│   └── db.js
+├── models/
+│   ├── Post.js
+│   └── Users.js
+├── routes/
+│   ├── admin.js
+│   └── main.js
+├── views/
+│   ├── about.ejs
+│   ├── index.ejs
+│   ├── post.ejs
+│   ├── admin/
+│   │   └── index.ejs
 │   └── layouts/
-│       └── main.ejs (기본 레이아웃)
-│
-├── 📁 public/                (정적 파일 - 🔲 생성됨)
+│       ├── admin.ejs
+│       └── main.ejs
+├── public/
 │   ├── css/
-│   ├── js/
-│   └── images/
-│
-├── 📁 config/                (설정 파일 - 🔲 생성됨)
-│
-├── 📁 models/                (데이터 모델 - 🔲 생성됨)
-│
-├── 📁 assets/                (자산 폴더 - 🔲 생성됨)
-│
-├── 📄 AGENTS.md              (프로젝트 정보용)
-├── 📄 Journey.md             (개발 기록 - 이 파일)
-├── 📄 package.json
-├── 📄 package-lock.json
-│
-└── 📁 node_modules/          (의존성 폴더)
-```
-
-**범례**:
-- ✅ = 완료된 작업 (코드 작성 완료)
-- 🔲 = 파일 생성됨 (코드 미작성)
-- ⏳ = 진행 중
-- 💾 = 대기 중
-
----
-
-## 📝 기록 규칙
-
-앞으로 작업할 때 이 순서대로 기록합니다:
-
-```
-### #️⃣ [번호] [명령어 또는 작업명]
-**날짜**: YYYY-MM-DD  
-**목적**: 왜 이 작업을 했는지  
-**상태**: ✅ 완료 / ⚠️ 진행중 / ❌ 실패  
-**설명**: 구체적인 작업 내용  
-**변경사항**: 
-- ✅ 추가된 파일
-- ✅ 수정된 파일
-- ✅ 실행된 명령어
+│   └── img/
+├── AGENTS.md
+├── Journey.md
+├── package.json
+└── package-lock.json
 ```
 
 ---
 
-## ✅ 다음 단계 체크리스트
+## 다음 단계 체크리스트
 
-- [x] **1️⃣ npm i express dotenv**: Express와 dotenv 설치
-- [x] **2️⃣ 폴더 구조 생성**: app.js, routes/, 기타 폴더 생성
-- [x] **3️⃣ app.js 초기화**: Express 서버 기본 설정
-- [x] **4️⃣ routes/main.js 구현**: 기본 라우트 핸들러 작성
-- [x] **5️⃣ npm i ejs express-ejs-layouts**: 뷰 엔진 설치
-- [x] **6️⃣ routes/main.js 확장 & 버그 수정**: 라우트 확장 및 에러 수정
-- [x] **7️⃣ app.js EJS 설정 완료**: EJS 뷰 엔진 등록 및 설정
-- [x] **8️⃣ views 디렉토리 생성**: 템플릿 파일 작성 (layout.ejs, index.ejs, about.ejs)
-- [x] **9️⃣ 템플릿 파일 상세 구현**: 블로그 UI 레이아웃 및 컨텐츠 작성
-- [x] **🔟 npm i mongoose express-async-handler**: MongoDB 의존성 설치
-- [ ] **1️⃣1️⃣ MongoDB 인증 해결**: 비밀번호 재확인 및 IP 화이트리스트 설정
-- [ ] **1️⃣2️⃣ public 디렉토리 구성**: CSS, JS, 이미지 파일 추가
-- [ ] **1️⃣3️⃣ CSS 스타일링**: style.css 작성 및 페이지 디자인
-- [ ] **1️⃣4️⃣ npm start 테스트**: 서버 실행 및 모든 페이지 확인
+- [x] Express/dotenv 설치
+- [x] EJS/express-ejs-layouts 설치
+- [x] Mongoose/express-async-handler 설치
+- [x] bcrypt 설치
+- [x] cookie-parser 설치
+- [x] jsonwebtoken 설치
+- [x] 일반 라우트 구성
+- [x] 관리자 GET `/admin` 라우트 구성
+- [x] 관리자 GET/POST `/register` 라우트 구성
+- [ ] `views/admin/allPosts.ejs` 생성
+- [ ] `views/contact.ejs` 생성 또는 `/contact` 라우트 제거
+- [ ] `/register`에서 사용자 저장 로직 확인
+- [ ] 로그인 실패 처리에 `return` 추가
+- [ ] JWT payload 이름 `id` 또는 `userId`로 통일
+- [ ] 관리자 보호 라우트 `checkLogin` 정리
+- [ ] 게시글 CRUD 라우트 추가
+- [ ] Jest/Supertest 테스트 추가
+- [ ] Cloudtype 배포 준비
 
 ---
 
-**마지막 업데이트**: 2026-09-01
+**마지막 업데이트**: 2026-09-02
