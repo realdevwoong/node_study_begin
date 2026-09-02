@@ -1,1 +1,2 @@
 window.txt
+/home/techinwoong/note_test/03/window.txt
